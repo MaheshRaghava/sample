@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Diffie-Hellman</title>
+</head>
+<body>
+
+<h3>Diffie-Hellman Key Exchange</h3>
+
+<p>Prime (p):<br><input type="number" id="p" value="23"></p>
+<p>Generator (g):<br><input type="number" id="g" value="5"></p>
+<p>Alice Private Key (a):<br><input type="number" id="a" value="6"></p>
+
+<button onclick="compute()">Compute</button>
+
+<p id="result"></p>
+
+<script>
+function modPow(base, exp, mod) {
+    let result = 1;
+    base = base % mod;
+    while (exp > 0) {
+        if (exp % 2 === 1)
+            result = (result * base) % mod;
+        base = (base * base) % mod;
+        exp = Math.floor(exp / 2);
+    }
+    return result;
+}
+
+function compute() {
+    let p = parseInt(document.getElementById("p").value);
+    let g = parseInt(document.getElementById("g").value);
+    let a = parseInt(document.getElementById("a").value);
+
+    if (!p || !g || !a) {
+        document.getElementById("result").innerHTML = "Please enter valid numbers";
+        return;
+    }
+
+    let b = Math.floor(Math.random() * (p - 2)) + 2;
+
+    let A = modPow(g, a, p);
+    let B = modPow(g, b, p);
+
+    let Ka = modPow(B, a, p);
+    let Kb = modPow(A, b, p);
+
+    document.getElementById("result").innerHTML =
+        "Alice private key = " + a + "<br>" +
+        "Bob private key = " + b + "<br><br>" +
+        "Alice public key (A) = " + A + "<br>" +
+        "Bob public key (B) = " + B + "<br><br>" +
+        "Alice secret key = " + Ka + "<br>" +
+        "Bob secret key = " + Kb + "<br><br>" +
+        (Ka === Kb ? "Keys matched!" : "Keys not matched!");
+}
+</script>
+
+</body>
+</html>
